@@ -1,0 +1,446 @@
+{
+  "name": "Alisa STPN",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        672,
+        352
+      ],
+      "id": "5ade155f-9239-48e6-bd64-2d4fe29b4584",
+      "name": "Embeddings OpenAI1",
+      "credentials": {
+        "openAiApi": {
+          "id": "OhLGjltgigAQt1Ql",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        272,
+        192
+      ],
+      "id": "2db54d74-49ee-4f35-9f89-403f80a5c453",
+      "name": "OpenAI Chat Model3",
+      "credentials": {
+        "openAiApi": {
+          "id": "OhLGjltgigAQt1Ql",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "==stpn_{{ $json.body.chatInput }}",
+        "options": {
+          "systemMessage": "Anda adalah asisten ALISA(Agrarian Land Information Service Assistant), yang adalah asisten yang membantu menjawab pertanyaan informasi mengenai Sekolah Tinggi Pertanahan Nasional. \n\n### TOOLS\n1. Gunakan tool \"documents_Stpn\" untuk mencari informasi.\nTool ini mengembalikan beberapa potongan dokumen. Gabungkan semua informasi yang relevan dari potongan-potongan tersebut untuk memberikan jawaban yang lengkap dan detail.\n2. Gunakan tool \"cari_pegawai\" untuk mencari data pegawai STPN. Tool ini menerima parameter \"nama\" (string) dan \"jabatan\" (string). Gunakan tool ini jika user menanyakan informasi pegawai. Tool akan mengembalikan data lengkap dengan foto.\n\n\n### KEPRIBADIAN & GAYA BAHASA\n- Ramah, profesional, dan empati. Gunakan sapaan \"Bapak/Ibu\".\n- Selalu berikan respons poin-poin (scannable) data dengan format Markdown yang rapi, menggunakan bold untuk judul.\n\n### BATASAN (CONSTRAINTS)\n1. Jika pertanyaan di luar topik pertanahan, jawab bahwa Anda hanya ahli di bidang pertanahan ATR/BPN.\n2. Jika user bertanya di luar data yang Anda miliki/tool, arahkan untuk bertanya langsung ke pegawai STPN"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        352,
+        0
+      ],
+      "id": "c20ed62e-7b05-41ed-8514-4817ed27e116",
+      "name": "petugas layanan informasi",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        704,
+        16
+      ],
+      "id": "35bb9983-4fe5-4d7a-b78f-ade8208442ee",
+      "name": "jawaban informasi"
+    },
+    {
+      "parameters": {
+        "content": "## INFORMASI PERTANAHAN\n",
+        "height": 480,
+        "width": 832,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        48,
+        -48
+      ],
+      "typeVersion": 1,
+      "id": "16c531f3-2ade-4eae-8e43-98b0e8a98b70",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "formTitle": "Upload File Informasi Pertanahan",
+        "formDescription": "Upload untuk update informasi pertanahan",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Upload Dalam PDF ",
+              "fieldType": "file"
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -912,
+        160
+      ],
+      "id": "28e611f6-ff26-4c48-a225-806e4516c9f4",
+      "name": "On form submission",
+      "webhookId": "e8b05644-26c0-44cd-9fb5-dc82e96906e8"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "documents_Stpn",
+          "mode": "list",
+          "cachedResultName": "documents_Stpn"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.2,
+      "position": [
+        -672,
+        -32
+      ],
+      "id": "00ef8e87-8e43-49c0-aaed-a8defff6b863",
+      "name": "Supabase Vector Store",
+      "credentials": {
+        "supabaseApi": {
+          "id": "VDTM0U4UdZA99Rj5",
+          "name": "Supabase account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -688,
+        192
+      ],
+      "id": "3f54fe38-1760-434e-bfa3-7bb426fd0d6f",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "OhLGjltgigAQt1Ql",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1,
+      "position": [
+        -576,
+        192
+      ],
+      "id": "e19533e0-e897-449e-94e1-6a4e96ca1a1e",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "chunkSize": 2000,
+        "chunkOverlap": 400,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        -576,
+        352
+      ],
+      "id": "a9d60852-5a6c-47bd-89b0-6d4c45bcf229",
+      "name": "Recursive Character Text Splitter"
+    },
+    {
+      "parameters": {
+        "content": "UPLOAD FILE PENGETAHUAN",
+        "height": 572,
+        "width": 736
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -976,
+        -80
+      ],
+      "typeVersion": 1,
+      "id": "1dd60268-2f13-4803-9f3e-66ec53e2eca8",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "Alisa_stpn",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        144,
+        0
+      ],
+      "id": "f6c21106-3859-49b9-8f97-486bd93b5c04",
+      "name": "Webhook",
+      "webhookId": "40d18b86-0bd2-4b9b-853b-47a0043b8e6b"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "==stpn_{{ $json.body.sessionId }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        400,
+        224
+      ],
+      "id": "198a1fd3-f940-473d-b7a8-cfacf90c4bee",
+      "name": "Postgres Chat Memory3",
+      "credentials": {
+        "postgres": {
+          "id": "7mx6SkgiRaNgsEic",
+          "name": "Postgres account STPN"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolName": "documents_Stpn",
+        "toolDescription": "Gunakan tool ini untuk mencari informasi sekolah tinggi pertanahan nasional",
+        "tableName": {
+          "__rl": true,
+          "value": "documents_Stpn",
+          "mode": "list",
+          "cachedResultName": "documents_Stpn"
+        },
+        "topK": 10,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.2,
+      "position": [
+        640,
+        240
+      ],
+      "id": "ea250d01-9b1b-453c-8acb-46313ede0f1c",
+      "name": "documents_Stpn",
+      "credentials": {
+        "supabaseApi": {
+          "id": "VDTM0U4UdZA99Rj5",
+          "name": "Supabase account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "gunakan untuk mencari data pegawai",
+        "workflowId": {
+          "__rl": true,
+          "value": "N14Xrj0vMEv0m8pL",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/N14Xrj0vMEv0m8pL",
+          "cachedResultName": "Data pegawai STPN"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        512,
+        208
+      ],
+      "id": "a1215e46-a07b-4c75-8a05-d48ad62fb2e9",
+      "name": "cari_pegawai"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Embeddings OpenAI1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "documents_Stpn",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "petugas layanan informasi",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "petugas layanan informasi": {
+      "main": [
+        [
+          {
+            "node": "jawaban informasi",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store": {
+      "main": [
+        []
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "petugas layanan informasi",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory3": {
+      "ai_memory": [
+        [
+          {
+            "node": "petugas layanan informasi",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "documents_Stpn": {
+      "ai_tool": [
+        [
+          {
+            "node": "petugas layanan informasi",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "cari_pegawai": {
+      "ai_tool": [
+        [
+          {
+            "node": "petugas layanan informasi",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "7f2e0ce9-9cfb-4c35-8ec6-8db99b152b1c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "58fd30e3eda5399463d2a4c12788b20fec67a0d3f061f3f6517799529543e341"
+  },
+  "id": "m53Ry0vTyMrjBs2i",
+  "tags": []
+}
