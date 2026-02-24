@@ -241,7 +241,13 @@ if (isAi) {
 
     // 3. Ubah newline (\n) menjadi <br>
     formattedText = formattedText.replace(/\n/g, '<br>');
-
+    
+    // Bersihkan semua backslash dalam URL di tag img
+    formattedText = formattedText.replace(/<img src="([^"]+)"([^>]*)>/g, function(match, url, rest) {
+    const cleanUrl = url.replace(/\\/g, '');
+    return `<img src="${cleanUrl}"${rest}>`;
+});
+    
     // 4. Tampilkan di chat
     msgDiv.innerHTML = `<div class="text-sm leading-relaxed text-stone-800">${formattedText}</div>`;
 
@@ -525,6 +531,7 @@ window.onload = () => {
     </script>
 </body>
 </html>
+
 
 
 
